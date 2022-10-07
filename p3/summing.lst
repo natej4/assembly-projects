@@ -1,0 +1,60 @@
+     1                                  ; Nate Jackson
+     2                                  ; 322 10/05/2022
+     3                                  ; P3: Summing Arrays
+     4                                  ; Sums all the elements of arrays and sums all arrays
+     5                                  
+     6                                  SECTION .data
+     7                                  ; define data/variables here.  Think DB, DW, DD, DQ
+     8 00000000 FFFEFDFCFB              bArray:          DB        -1,-2,-3,-4,-5
+     9 00000005 000001000200030004-     wArray:          DW        0,1,2,3,4
+    10 0000000E 00                 
+    11 0000000F 4201000022030000D2-     dArray:          DD        322,322h,322q,1833,1833h
+    12 00000018 000000290700003318-
+    13 00000021 0000               
+    14 00000023 00                      bArraySum:       DB        0
+    15 00000024 0000                    wArraySum:       DW        0
+    16 00000026 00000000                dArraySum:	 DD        0
+    17 0000002A 00000000                grandTotal:	 DD        0
+    18                                  
+    19                                  SECTION .bss
+    20                                  ; define uninitialized data here
+    21                                  
+    22                                  SECTION .text
+    23                                  global _main
+    24                                  _main:
+    25                                  
+    26                                  ; put your code here.
+    27 00000000 8A25[00000000]          mov AH, [bArray]
+    28 00000006 0225[01000000]          add AH, [bArray + 1]
+    29 0000000C 0225[02000000]          add AH, [bArray + 2]
+    30 00000012 0225[03000000]          add AH, [bArray + 3]
+    31 00000018 0225[04000000]          add AH, [bArray + 4]
+    32 0000001E 8825[23000000]          mov [bArraySum], AH
+    33 00000024 A0[23000000]            mov AL, [bArraySum]
+    34 00000029 0FBEC0                  movsx EAX,AL
+    35 0000002C 0105[2A000000]          add [grandTotal], EAX
+    36                                  b:
+    37 00000032 66A1[05000000]          mov AX, [wArray]
+    38 00000038 660305[07000000]        add AX, [wArray + 2]
+    39 0000003F 660305[09000000]        add AX, [wArray + 4]
+    40 00000046 660305[0B000000]        add AX, [wArray + 6]
+    41 0000004D 660305[0D000000]        add AX, [wArray + 8]
+    42 00000054 66A3[24000000]          mov [wArraySum], AX
+    43 0000005A 0FBFC0                  movsx EAX, AX
+    44 0000005D 0105[2A000000]          add [grandTotal], EAX
+    45                                  b1:
+    46                                  
+    47 00000063 A1[0F000000]            mov EAX, [dArray]
+    48 00000068 0305[10000000]          add EAX, [dArray + 1]
+    49 0000006E 0305[11000000]          add EAX, [dArray + 2]
+    50 00000074 0305[12000000]          add EAX, [dArray + 3]
+    51 0000007A 0305[13000000]          add EAX, [dArray + 4]
+    52 00000080 A3[26000000]            mov [dArraySum], EAX
+    53 00000085 0105[2A000000]          add [grandTotal], EAX
+    54                                  b2:
+    55                                  
+    56                                  lastBreak:
+    57                                  ; Normal termination code
+    58 0000008B B801000000              mov eax, 1
+    59 00000090 BB00000000              mov ebx, 0
+    60 00000095 CD80                    int 80h

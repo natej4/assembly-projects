@@ -8,6 +8,7 @@ SECTION .data
 
 SECTION .bss
 ; define uninitialized data here
+Fibs:	RESW 16
 
 SECTION .text
 global _main
