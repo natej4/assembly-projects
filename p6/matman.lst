@@ -1,0 +1,94 @@
+     1                                  ;Nate Jackson
+     2                                  ;CSC 322 P6
+     3                                  ;11/2/2022
+     4                                  ;Sum the rows, columns, and all values in a matrix
+     5                                  
+     6                                  ROWS:	      EQU    5    ; defines a constant ROWS set to 3.
+     7                                  COLS:	      EQU    7    ; defines a constant COLS set to 2.
+     8                                  
+     9                                  SECTION .data
+    10 00000000 010002000300040005-     MyMatrix:    	dw      1,   2, 3, 4, 5, 6, 7
+    11 00000009 0006000700         
+    12 0000000E 080009000A000B000C-     		dw      8, 9, 10, 11, 12, 13, 14
+    13 00000017 000D000E00         
+    14 0000001C 0F0010001100120013-            		dw     15, 16, 17, 18, 19, 20, 21
+    15 00000025 0014001500         
+    16 0000002A 16001700180019001A-     		dw	22, 23, 24, 25, 26, 27, 28
+    17 00000033 001B001C00         
+    18 00000038 1D001E001F00200021-     		dw	29, 30, 31, 32, 33, 34, 35
+    19 00000041 0022002300         
+    20 00000046 0000                    count:	dw 0
+    21 00000048 00000000                offset: dd 0
+    22                                  SECTION .bss
+    23 00000000 <res 0000000A>          RowSums:    RESW ROWS
+    24 0000000A <res 0000000E>          ColSums:    RESW COLS
+    25 00000018 <res 00000002>          Sum:        RESW 1
+    26                                  
+    27                                  SECTION .text
+    28                                  global _main
+    29                                  _main:
+    30 00000000 66B90500                mov CX, ROWS
+    31 00000004 66B80000                mov AX, 0
+    32 00000008 BA00000000              mov EDX, 0
+    33 0000000D BB00000000              mov EBX, 0
+    34                                  toprows:
+    35                                  
+    36 00000012 66833D[46000000]07      cmp WORD [count], COLS
+    37 0000001A 7413                    je row
+    38 0000001C 660383[00000000]        add ax, [MyMatrix+ebx] 
+    39 00000023 83C302                  add ebx, 2
+    40 00000026 66FF05[46000000]        inc WORD [count]
+    41 0000002D EBE3                    jmp toprows
+    42                                  row:
+    43 0000002F 660182[00000000]        add [RowSums+edx], ax
+    44 00000036 83C202                  add edx, 2
+    45 00000039 66B80000                mov ax, 0
+    46 0000003D 66C705[46000000]00-     mov WORD [count], 0
+    47 00000045 00                 
+    48                                  
+    49                                  
+    50 00000046 E2CA                    loop toprows
+    51                                  
+    52                                  
+    53 00000048 66B90700                mov CX, COLS
+    54 0000004C 31D2                    xor EDX,EDX
+    55 0000004E BB00000000              mov EBX, 0
+    56 00000053 66C705[46000000]00-     mov WORD [count], 0
+    57 0000005B 00                 
+    58 0000005C 31C0                    xor EAX,EAX
+    59                                  
+    60                                  topcols:
+    61                                  
+    62 0000005E 891D[48000000]          mov [offset], EBX
+    63                                  t2:
+    64 00000064 66833D[46000000]05      cmp WORD [count], ROWS
+    65 0000006C 7413                    je col
+    66 0000006E 660383[00000000]        add ax, [MyMatrix+ebx]
+    67 00000075 83C30E                  add ebx, COLS*2
+    68 00000078 66FF05[46000000]        inc WORD [count]
+    69 0000007F EBE3                    jmp t2
+    70                                  col:
+    71 00000081 660182[0A000000]        add [ColSums+edx],ax
+    72 00000088 83C202                  add edx, 2
+    73 0000008B 8B1D[48000000]          mov EBX, [offset]
+    74 00000091 83C302                  add EBX, 2
+    75 00000094 66C705[46000000]00-     mov WORD [count], 0
+    76 0000009C 00                 
+    77 0000009D 66B80000                mov AX, 0
+    78 000000A1 E2BB                    loop topcols
+    79                                  
+    80 000000A3 BB00000000              mov EBX, 0
+    81 000000A8 66B90700                mov CX, COLS
+    82                                  
+    83                                  csum:
+    84 000000AC 668B83[0A000000]        mov AX, [ColSums+ebx]
+    85 000000B3 660105[18000000]        add [Sum], AX
+    86 000000BA 83C302                  add EBX, 2
+    87 000000BD E2ED                    loop csum
+    88                                  
+    89                                  lastBreak:
+    90                                  
+    91 000000BF B801000000              mov eax, 1
+    92 000000C4 BB00000000              mov ebx, 0
+    93 000000C9 CD80                    int 80h
+    94                                  
